@@ -5,27 +5,38 @@ const REQUEST_SHEET_ID = "1J3BqxjpEw2ZhNo3DY_-5TNkaBKNrIgKqLEPXuxa4_eY";
 const STUDENT_MASTER_SHEET_ID = "1eEiktXg_yZCac0EZk9ZtWzonQtpNTGKJ4DoEGyobybw";
 
 let isAuthenticated = false;
+let refreshInterval = null;
+
+/* ===============================
+   LOGIN
+================================ */
 
 function adminLogin() {
   const pass = document.getElementById("adminPassword").value.trim();
 
-  if (!pass) {
-    alert("Enter password");
-    return;
-  }
+  if (!pass) return alert("Enter password");
 
   if (pass === ADMIN_PASSWORD) {
     isAuthenticated = true;
     document.getElementById("loginBox").style.display = "none";
     document.getElementById("dashboard").style.display = "block";
     loadDashboard();
+
+    // 🔁 Auto refresh every 30 seconds
+    refreshInterval = setInterval(loadDashboard, 30000);
   } else {
     alert("❌ Invalid password");
     document.getElementById("adminPassword").value = "";
   }
 }
 
+/* ===============================
+   DASHBOARD STATS (LIVE)
+================================ */
+
 function loadDashboard() {
+  if (!isAuthenticated) return;
+
   fetch(`${BASE_URL}?adminStats=true`)
     .then(res => res.json())
     .then(data => {
@@ -40,10 +51,19 @@ function loadDashboard() {
     });
 }
 
+/* ===============================
+   LOGOUT
+================================ */
+
 function logoutAdmin() {
   isAuthenticated = false;
+  clearInterval(refreshInterval);
   window.location.href = "index.html";
 }
+
+/* ===============================
+   DOWNLOADS
+================================ */
 
 function downloadStudentMaster() {
   if (!isAuthenticated) return alert("Login first");
@@ -60,6 +80,10 @@ function downloadAllRequests() {
     `https://docs.google.com/spreadsheets/d/${REQUEST_SHEET_ID}/export?format=xlsx`
   );
 }
+
+/* ===============================
+   DATE FILTER (BEST POSSIBLE)
+================================ */
 
 function downloadRequestsWithDateFilter() {
   if (!isAuthenticated) return alert("Login first");
@@ -78,15 +102,26 @@ function downloadRequestsWithDateFilter() {
   }
 
   alert(
-`Google Sheets does not support auto filtered downloads.
-The sheet will now open.
+`Google Sheets limitation:
 
-Apply filter on Timestamp column:
+The sheet will now open.
+Apply filter on DATE column:
 Between ${start} and ${end}
-Then download as Excel.`
+
+Then use:
+File → Download → Excel`
   );
 
   window.open(
     `https://docs.google.com/spreadsheets/d/${REQUEST_SHEET_ID}/edit`
   );
+}
+
+/* ===============================
+   PASSWORD TOGGLE
+================================ */
+
+function togglePassword() {
+  const pwd = document.getElementById("adminPassword");
+  pwd.type = pwd.type === "password" ? "text" : "password";
 }
