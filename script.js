@@ -1,212 +1,171 @@
-const BASE_URL = "https://script.google.com/macros/s/AKfycbxue-jZ8DkUr-4Q0IipHlBJet7fKSEIGpm06Ffdyol7yFRE1BBWlfNmTUksoNYiOysB/exec";
+/*************************
+ CONFIG
+**************************/
+const BASE_URL =
+  "https://script.google.com/macros/s/AKfycbxx71__r-MOGpMhlnSmprVzkwq3higbUHemY3qN-X80EJaVWRHnK1HYP72N89mA7171/exec";
+
 let groupMembers = [];
 
-/* ===============================
-   PAYMENT DROPDOWN DATA
-================================ */
+/*************************
+ PAYMENT CATEGORY DATA
+**************************/
+const paymentData = {
 
-const paymentData = { 
-  fees: {
-    "College Fee": [
-      "Tuition Fee",
-      "Affiliation Fee",
-      "Building Fee",
-      "Semester Registration Fee",
-      "College Reporting Fee",
-      "CRT Fee",
-      "Placement Fee",
-      "College Bus Fee",
-      "College Uniform",
-      "CA/CMA/CS Coaching Fee",
-      "Minor Degree Tuition Fee"
-    ], 
+  "College Fee": [
+    "Tuition Fee",
+    "Affiliation Fee",
+    "Building Fee",
+    "Semester Registration Fee",
+    "College Reporting Fee",
+    "CRT Fee",
+    "College Bus Fee",
+    "College Uniform",
+    "Minor Degree Tuition Fee"
+  ],
 
-    "Exam Fee": [
-      "Semester Exam Fee",
-      "Annual Exam Fee",
-      "CA/CMA/CS Exam Fee",
-      "IPE Board Exam Fee",
-      "NPTEL Exam Fee",
-      "Minor Degree Exam Fee"
-    ], 
+  "Exam Fee": [
+    "Semester Exam Fee",
+    "Annual Exam Fee",
+    "CA/CMA/CS Exam Fee",
+    "IPE Board Exam Fee",
+    "NPTEL Exam Fee",
+    "Minor Degree Exam Fee"
+  ],
 
-    "Miscellaneous Fees": [
-      "CMM",
-      "Original Degree",
-      "Provisional Fee",
-      "NCC Related",
-      "Study Hall Fee"
-    ],
+  "Miscellaneous Fees": [
+    "CMM",
+    "Original Degree",
+    "Provisional Fee",
+    "NCC Related",
+    "Study Hall Fee"
+  ],
 
-    "Hostel Fee": [
-      "Hostel Fee"
-    ],
+  "Hostel and Mess Fee": [
+    "Hostel Fee",
+    "Mess Fee"
+  ],
 
-    "Mess Fee": [
-      "Mess Fee"
-    ],
+  "Technical Courses": [
+    "C",
+    "Java",
+    "Full Stack",
+    "Skill Enhancement Course",
+    "DSA",
+    "NPTEL",
+    "TASK"
+  ],
 
-    "Extra Academic Expense": [
-      "Internship Fee",
-      "Major Project Equipment",
-      "Minor Project Equipment",
-      "Industrial Visit",
-      "IEEE",
-      "CISCO",
-      "SAE",
-      "TASK"
-    ],
+  "Personality Development Course": [
+    "Yoga",
+    "Mind Management Techniques",
+    "Fear and Anxiety Course",
+    "Other Development Sessions",
+    "Spoken English Course"
+  ],
 
-    "Graduate Entrance Registration": [
-      "TS EAMCET Registration",
-      "AP EAMCET Registration",
-      "JEE Mains Registration",
-      "JEE Advanced Registration",
-      "NEET Registration",
-      "CA/CMA/CS Registration",
-      "DOST Registration Fee",
-      "CSAB Fee"
-    ],  
+  "Placement Related": [
+    "Placement Fee",
+    "Internship Fee",
+    "Major Project Equipment",
+    "Minor Project Equipment",
+    "Industrial Visit",
+    "IEEE",
+    "CISCO",
+    "SAE"
+  ],
 
-    "Post-Graduate Entrance Registration": [
-      "GATE Application Fee",
-      "NEET PG Application Fee",
-      "CUET Application Fee",
-      "GPAT Application Fee"
-    ],
+  "Records and Manuals": [
+    "Lab Records",
+    "Lab Manuals",
+    "Major Project Reports",
+    "Minor Project Reports"
+  ],
 
-    "Graduate Counselling": [
-      "TS EAMCET Counselling",
-      "AP EAMCET Counselling",
-      "JoSAA Counselling",
-      "MCC Counselling",
-      "TS MBBS Counselling",
-      "Ag BSc / BVSc Counselling",
-      "BSc Nursing Counselling",
-      "TS AYUSH Counselling",
-      "DOST Counselling"
-    ],
+  "Stationery": [
+    "Pens",
+    "Pencils",
+    "Loose Sheets",
+    "Scale"
+  ],
 
-    "Extra Coaching": [
-      "GATE Coaching",
-      "NEET PG Coaching",
-      "Study Material / Marrow"
-    ],
+  "Graduate Essentials": [
+    "Aprons",
+    "Drafters",
+    "Calculators",
+    "Drawing Instruments",
+    "Scrubs",
+    "Stethoscope",
+    "Dissection Kit",
+    "Knee Hammer",
+    "Trunk Box",
+    "Plank",
+    "Chair",
+    "Plate",
+    "Glass",
+    "Bag",
+    "Bedsheet",
+    "Cot",
+    "Water Bottle",
+    "Bucket",
+    "Mug",
+    "Lock",
+    "Pillow"
+  ],
 
-    "Spoken English Course": [
-      "Spoken English Course"
-    ],
+  "Text Books": [
+    "Text Books",
+    "Reference Materials",
+    "Note Books"
+  ],
 
-    "Technical Courses": [
-      "C",
-      "Java",
-      "Full Stack",
-      "Skill Enhancement Course",
-      "DSA",
-      "NPTEL",
-      "TASK"
-    ]
-  },
+  "Graduate Entrance Registration": [
+    "TS EAMCET Registration",
+    "AP EAMCET Registration",
+    "JEE Mains Registration",
+    "JEE Advanced Registration",
+    "NEET Registration",
+    "CA/CMA/CS Registration",
+    "DOST Registration Fee",
+    "CSAB Fee"
+  ],
 
-  books: {
-    "Text Books": [
-      "Text Books",
-      "Reference Materials"
-    ],
+  "Post-Graduate Entrance Registration": [
+    "GATE Application Fee",
+    "NEET PG Application Fee",
+    "CUET Application Fee",
+    "GPAT Application Fee"
+  ],
 
-    "Note Books": [
-      "Note Books"
-    ],
+  "Graduate Counselling": [
+    "TS EAMCET Counselling",
+    "AP EAMCET Counselling",
+    "JoSAA Counselling",
+    "MCC Counselling",
+    "TS MBBS Counselling",
+    "Ag BSc / BVSc Counselling",
+    "BSc Nursing Counselling",
+    "TS AYUSH Counselling",
+    "DOST Counselling"
+  ],
 
-    "Stationery": [
-      "Pens",
-      "Pencils",
-      "Loose Sheets",
-      "Scale"
-    ],
-
-    "Records and Manuals": [
-      "Lab Records",
-      "Lab Manuals",
-      "Major Project Reports",
-      "Minor Project Reports"
-    ],
-
-    "Engineering Required Items": [
-      "Aprons",
-      "Drafters",
-      "Calculators",
-      "Drawing Instruments"
-    ],
-
-    "MBBS Required Items": [
-      "Aprons",
-      "Scrubs",
-      "Stethoscope",
-      "Dissection Kit",
-      "Knee Hammer"
-    ],
-
-    "MSS Enrolment Kits": [
-      "Trunk Box",
-      "Plank",
-      "Chair",
-      "Plate",
-      "Glass",
-      "Bag",
-      "Bedsheet",
-      "Cot",
-      "Water Bottle",
-      "Bucket",
-      "Mug",
-      "Lock",
-      "Pillow"
-    ]
-  },
-
-  conveyance: {
-    "Regular Travel": [
-      "Monthly Bus Pass",
-      "Quarterly Bus Pass",
-      "Monthly Auto Pass",
-      "Daily Travel",
-      "Medical Travel",
-      "College Reporting",
-      "Outstation Travel"
-    ]
-  },
-
-  welfare: {
-    "Food Expenses": [
-      "Food Expenses",
-      "Additional Aid",
-      "Relief",
-      "Telephone Expenses",
-      "Data Expenses",
-      "Awards to Students"
-    ],
-
-    "Personality Development Session": [
-      "Yoga",
-      "Mind Management Techniques",
-      "Fear and Anxiety Course",
-      "Other Development Sessions"
-    ]
-  }
+  "Post-Graduate Coaching": [
+    "GATE Coaching",
+    "NEET PG Coaching",
+    "Study Material / Marrow"
+  ]
 };
 
-
+/*************************
+ LOAD CATEGORIES
+**************************/
 function loadCategories() {
-  const process = document.getElementById("paymentType").value;
   const category = document.getElementById("category");
   const subCategory = document.getElementById("subCategory");
 
   category.innerHTML = `<option value="">Select Category</option>`;
   subCategory.innerHTML = `<option value="">Select Sub-Category</option>`;
 
-  if (!process) return;
-
-  Object.keys(paymentData[process]).forEach(cat => {
+  Object.keys(paymentData).forEach(cat => {
     const opt = document.createElement("option");
     opt.value = cat;
     opt.textContent = cat;
@@ -214,43 +173,42 @@ function loadCategories() {
   });
 }
 
+/*************************
+ LOAD SUB-CATEGORIES
+**************************/
 function loadSubCategories() {
-  const process = document.getElementById("paymentType").value;
-  const category = document.getElementById("category").value;
+  const categoryKey = document.getElementById("category").value;
   const subCategory = document.getElementById("subCategory");
 
   subCategory.innerHTML = `<option value="">Select Sub-Category</option>`;
+  if (!categoryKey) return;
 
-  if (!category) return;
-
-  paymentData[process][category].forEach(sub => {
+  paymentData[categoryKey].forEach(item => {
     const opt = document.createElement("option");
-    opt.value = sub;
-    opt.textContent = sub;
+    opt.value = item;
+    opt.textContent = item;
     subCategory.appendChild(opt);
   });
 }
 
-/* ===============================
-   HELPERS
-================================ */
-
+/*************************
+ HELPERS
+**************************/
 function val(id) {
   return document.getElementById(id).value.trim();
 }
 
-function setVal(id, v) {
-  document.getElementById(id).value = v || "";
+function setVal(id, value) {
+  document.getElementById(id).value = value || "";
 }
 
-/* ===============================
-   FETCH MAIN STUDENT
-================================ */
-
+/*************************
+ FETCH MAIN STUDENT
+**************************/
 function fetchMainStudent() {
   const mssid = val("mssid");
   if (!mssid) {
-    alert("Enter MSS ID");
+    alert("❌ Enter MSS ID");
     return;
   }
 
@@ -264,17 +222,12 @@ function fetchMainStudent() {
       setVal("name", data.name);
       setVal("college", data.college);
       alert("✅ Student details fetched");
-    })
-    .catch(err => {
-      alert("❌ Fetch failed");
-      console.error(err);
     });
 }
 
-/* ===============================
-   REQUEST TYPE
-================================ */
-
+/*************************
+ REQUEST TYPE
+**************************/
 function handleRequestType() {
   const type = val("requestType");
   document.getElementById("groupMembers").innerHTML = "";
@@ -284,13 +237,13 @@ function handleRequestType() {
     type === "Group" ? "block" : "none";
 }
 
-/* ===============================
-   GROUP INPUTS
-================================ */
-
+/*************************
+ CREATE GROUP INPUTS
+**************************/
 function createGroupInputs() {
   const count = parseInt(val("groupCount"));
   const box = document.getElementById("groupMembers");
+
   box.innerHTML = "";
   groupMembers = [];
 
@@ -308,10 +261,9 @@ function createGroupInputs() {
   }
 }
 
-/* ===============================
-   FETCH GROUP MEMBER
-================================ */
-
+/*************************
+ FETCH GROUP MEMBER
+**************************/
 function fetchGroupMember(i) {
   const mssid = val(`gm_mssid_${i}`);
   const year = val(`gm_year_${i}`);
@@ -338,54 +290,38 @@ function fetchGroupMember(i) {
         name: data.name,
         college: data.college
       };
-
-      alert(`✅ Member ${i + 1} fetched`);
-    })
-    .catch(err => {
-      alert("❌ Fetch failed");
-      console.error(err);
     });
 }
 
-/* ===============================
-   SUBMIT REQUEST
-================================ */
-
+/*************************
+ SUBMIT REQUEST
+**************************/
 function submitRequest() {
 
-  if (!val("requestType") ||
-      !val("paymentType") ||
-      !val("category") ||
-      !val("subCategory") ||
-      !val("paymentMode") ||
-      !val("dueDate")) {
+  if (
+    !val("requestType") ||
+    !val("category") ||
+    !val("subCategory") ||
+    !val("paymentMode") ||
+    !val("dueDate")
+  ) {
     alert("❌ Please fill all required fields");
-    return;
-  }
-
-  if (val("requestType") === "Group" && groupMembers.length === 0) {
-    alert("❌ Add group members");
     return;
   }
 
   const payload = new URLSearchParams({
     requestType: val("requestType"),
-    paymentType: val("paymentType"),
     category: val("category"),
     subCategory: val("subCategory"),
     paymentMode: val("paymentMode"),
-
     details: val("details"),
     dueDate: val("dueDate"),
-
     mssid: val("mssid"),
     name: val("name"),
     college: val("college"),
     year: val("year"),
-
     attachmentLink: val("attachment"),
-    groupMembers: JSON.stringify(groupMembers),
-    memberCount: groupMembers.length
+    groupMembers: JSON.stringify(groupMembers)
   });
 
   fetch(BASE_URL, {
@@ -393,16 +329,8 @@ function submitRequest() {
     body: payload
   })
     .then(res => res.text())
-    .then(id => {
-      if (id.includes("ERROR")) {
-        alert("❌ " + id);
-      } else {
-        alert("✅ Request Submitted\nID: " + id);
-        window.location.href = "index.html";
-      }
-    })
-    .catch(err => {
-      alert("❌ Submission failed");
-      console.error(err);
+    .then(reqId => {
+      alert("✅ Request Submitted\nRequest ID: " + reqId);
+      window.location.href = "index.html";
     });
 }
