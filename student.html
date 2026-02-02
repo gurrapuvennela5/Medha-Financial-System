@@ -15,8 +15,8 @@
 
     <h4>Student Details</h4>
     <div class="form-row">
-      <input id="mssid" placeholder="MSS ID">
-      <input id="year" placeholder="Year of Studying">
+      <input id="mssid" placeholder="MSS ID" required>
+      <input id="year" placeholder="Year of Studying" required>
     </div>
 
     <button type="button" onclick="fetchMainStudent()">Fetch Details</button>
@@ -27,14 +27,14 @@
     </div>
 
     <h4>Request Type</h4>
-    <select id="requestType" onchange="handleRequestType()">
+    <select id="requestType" onchange="handleRequestType()" required>
       <option value="">Select Request Type</option>
       <option value="Individual">Individual</option>
       <option value="Group">Group</option>
     </select>
 
     <div id="groupCountBox" style="display:none">
-      <input id="groupCount" type="number" placeholder="Number of Group Members">
+      <input id="groupCount" type="number" placeholder="Number of Group Members" required>
       <button type="button" onclick="createGroupInputs()">Next</button>
     </div>
 
@@ -44,31 +44,31 @@
 
     <!-- CATEGORY -->
     <div class="form-row">
-      <select id="category" onchange="loadSubCategories()">
+      <select id="category" onchange="loadSubCategories()" required>
         <option value="">Select Category</option>
       </select>
     </div>
 
     <!-- SUB CATEGORY + PAYMENT MODE -->
     <div class="form-row">
-      <select id="subCategory">
+      <select id="subCategory" required>
         <option value="">Select Sub-Category</option>
       </select>
 
-      <select id="paymentMode">
+      <select id="paymentMode" required>
         <option value="">Payment Mode</option>
         <option value="Online">Online</option>
         <option value="Pay to Student">Pay to Student</option>
       </select>
     </div>
 
-    <textarea id="details" placeholder="Request Details / Links"></textarea>
+    <textarea id="details" placeholder="Request Details / Links" required></textarea>
 
     <h4>Due Date</h4>
     <input type="date" id="dueDate">
 
     <h4>Attachment (Google Drive Link)</h4>
-    <input type="url" id="attachment" placeholder="Paste Google Drive file link">
+    <input type="url" id="attachment" placeholder="Paste Google Drive file link" required>
 
     <button type="button" onclick="submitRequest()">Submit Request</button>
 
@@ -78,4 +78,5 @@
 <script src="script.js"></script>
 </body>
 </html>
+
 
