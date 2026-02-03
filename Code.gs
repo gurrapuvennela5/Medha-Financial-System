@@ -6,7 +6,7 @@
 /***********************
  CONFIGURATION
 ************************/
-const ADMIN_EMAIL = "admin@example.com"; // 🔁 CHANGE THIS
+const ADMIN_EMAIL = "mssc1@medhatrust.org"; // 🔁 CHANGE THIS
 const STUDENT_SHEET_ID = "1eEiktXg_yZCac0EZk9ZtWzonQtpNTGKJ4DoEGyobybw";
 const REQUEST_SHEET_ID = "1J3BqxjpEw2ZhNo3DY_-5TNkaBKNrIgKqLEPXuxa4_eY";
 const STUDENT_SHEET_NAME = "Student_DB";
