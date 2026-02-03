@@ -1,11 +1,42 @@
 const ADMIN_PASSWORD = "medha@admin";
-const BASE_URL = "https://script.google.com/macros/s/AKfycbxx71__r-MOGpMhlnSmprVzkwq3higbUHemY3qN-X80EJaVWRHnK1HYP72N89mA7171/exec";
+const BASE_URL = "https://script.google.com/macros/s/AKfycbzmtjtIQSfwbxln0rpwMYwBx5bmj-s0ew-CudukGPzknUXyqVr88JQqOx_282VhTNGI/exec";
 
 const REQUEST_SHEET_ID = "1J3BqxjpEw2ZhNo3DY_-5TNkaBKNrIgKqLEPXuxa4_eY";
 const STUDENT_MASTER_SHEET_ID = "1eEiktXg_yZCac0EZk9ZtWzonQtpNTGKJ4DoEGyobybw";
 
 let isAuthenticated = false;
 let refreshInterval = null;
+
+function fetchJsonp(url, timeoutMs = 8000) {
+  return new Promise((resolve, reject) => {
+    const callbackName = `jsonp_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
+    const script = document.createElement("script");
+    const timeout = setTimeout(() => {
+      cleanup();
+      reject(new Error("Request timed out"));
+    }, timeoutMs);
+
+    function cleanup() {
+      clearTimeout(timeout);
+      delete window[callbackName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+
+    window[callbackName] = data => {
+      cleanup();
+      resolve(data);
+    };
+
+    script.onerror = () => {
+      cleanup();
+      reject(new Error("Network error"));
+    };
+
+    const separator = url.includes("?") ? "&" : "?";
+    script.src = `${url}${separator}callback=${callbackName}`;
+    document.body.appendChild(script);
+  });
+}
 
 /* ===============================
    LOGIN
@@ -37,12 +68,11 @@ function adminLogin() {
 function loadDashboard() {
   if (!isAuthenticated) return;
 
-  fetch(`${BASE_URL}?adminStats=true`)
-    .then(res => res.json())
+  fetchJsonp(`${BASE_URL}?adminStats=true`)
     .then(data => {
-      document.getElementById("pendingCount").innerText = data.pending ?? 0;
-      document.getElementById("completedCount").innerText = data.completed ?? 0;
-      document.getElementById("totalCount").innerText = data.total ?? 0;
+      document.getElementById("pendingCount").innerText = data?.pending ?? 0;
+      document.getElementById("completedCount").innerText = data?.completed ?? 0;
+      document.getElementById("totalCount").innerText = data?.total ?? 0;
     })
     .catch(() => {
       document.getElementById("pendingCount").innerText = 0;

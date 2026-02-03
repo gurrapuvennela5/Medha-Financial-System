@@ -2,7 +2,7 @@
  CONFIG
 **************************/
 const BASE_URL =
-  "https://script.google.com/macros/s/AKfycbxx71__r-MOGpMhlnSmprVzkwq3higbUHemY3qN-X80EJaVWRHnK1HYP72N89mA7171/exec";
+  "https://script.google.com/macros/s/AKfycbzmtjtIQSfwbxln0rpwMYwBx5bmj-s0ew-CudukGPzknUXyqVr88JQqOx_282VhTNGI/exec";
 
 let groupMembers = [];
 
@@ -202,6 +202,37 @@ function setVal(id, value) {
   document.getElementById(id).value = value || "";
 }
 
+function fetchJsonp(url, timeoutMs = 8000) {
+  return new Promise((resolve, reject) => {
+    const callbackName = `jsonp_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
+    const script = document.createElement("script");
+    const timeout = setTimeout(() => {
+      cleanup();
+      reject(new Error("Request timed out"));
+    }, timeoutMs);
+
+    function cleanup() {
+      clearTimeout(timeout);
+      delete window[callbackName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+
+    window[callbackName] = data => {
+      cleanup();
+      resolve(data);
+    };
+
+    script.onerror = () => {
+      cleanup();
+      reject(new Error("Network error"));
+    };
+
+    const separator = url.includes("?") ? "&" : "?";
+    script.src = `${url}${separator}callback=${callbackName}`;
+    document.body.appendChild(script);
+  });
+}
+
 /*************************
  FETCH MAIN STUDENT
 **************************/
@@ -212,16 +243,18 @@ function fetchMainStudent() {
     return;
   }
 
-  fetch(`${BASE_URL}?mssid=${encodeURIComponent(mssid)}`)
-    .then(res => res.json())
+  fetchJsonp(`${BASE_URL}?mssid=${encodeURIComponent(mssid)}`)
     .then(data => {
-      if (!data.name) {
-        alert("❌ Student not found");
+      if (!data || !data.name) {
+        alert(data?.error || "❌ Student not found");
         return;
       }
       setVal("name", data.name);
       setVal("college", data.college);
       alert("✅ Student details fetched");
+    })
+    .catch(err => {
+      alert("❌ Unable to fetch student details. " + err.message);
     });
 }
 
@@ -273,11 +306,10 @@ function fetchGroupMember(i) {
     return;
   }
 
-  fetch(`${BASE_URL}?mssid=${encodeURIComponent(mssid)}`)
-    .then(res => res.json())
+  fetchJsonp(`${BASE_URL}?mssid=${encodeURIComponent(mssid)}`)
     .then(data => {
-      if (!data.name) {
-        alert("❌ Member not found");
+      if (!data || !data.name) {
+        alert(data?.error || "❌ Member not found");
         return;
       }
 
@@ -290,6 +322,9 @@ function fetchGroupMember(i) {
         name: data.name,
         college: data.college
       };
+    })
+    .catch(err => {
+      alert("❌ Unable to fetch member details. " + err.message);
     });
 }
 
@@ -298,15 +333,42 @@ function fetchGroupMember(i) {
 **************************/
 function submitRequest() {
 
+  // Validate all mandatory fields
   if (
+    !val("mssid") ||
+    !val("year") ||
+    !val("name") ||
+    !val("college") ||
     !val("requestType") ||
     !val("category") ||
     !val("subCategory") ||
     !val("paymentMode") ||
-    !val("dueDate")
+    !val("details") ||
+    !val("dueDate") ||
+    !val("attachment")
   ) {
     alert("❌ Please fill all required fields");
     return;
+  }
+
+  // Validate group members if request type is Group
+  const requestType = val("requestType");
+  if (requestType === "Group") {
+    const groupCount = parseInt(val("groupCount"));
+    if (!groupCount || groupCount < 1) {
+      alert("❌ Please specify number of group members");
+      return;
+    }
+    if (groupMembers.length !== groupCount) {
+      alert("❌ Please fetch details for all group members");
+      return;
+    }
+    for (let i = 0; i < groupCount; i++) {
+      if (!groupMembers[i] || !groupMembers[i].name) {
+        alert(`❌ Please fetch details for Group Member ${i + 1}`);
+        return;
+      }
+    }
   }
 
   const payload = new URLSearchParams({
