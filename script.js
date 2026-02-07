@@ -2,7 +2,7 @@
  CONFIG
 **************************/
 const BASE_URL =
-  "https://script.google.com/macros/s/AKfycbzmtjtIQSfwbxln0rpwMYwBx5bmj-s0ew-CudukGPzknUXyqVr88JQqOx_282VhTNGI/exec";
+  "https://script.google.com/macros/s/AKfycbxu8D_d2lV_jBkYVSkoMR7bN_F40u_jHfWKT91jKnYgx_w24IKeJFlez1_ATCe0bIOZ/exec";
 
 let groupMembers = [];
 
@@ -340,6 +340,7 @@ function submitRequest() {
     !val("name") ||
     !val("college") ||
     !val("requestType") ||
+    !val("amount") ||
     !val("category") ||
     !val("subCategory") ||
     !val("paymentMode") ||
@@ -373,6 +374,7 @@ function submitRequest() {
 
   const payload = new URLSearchParams({
     requestType: val("requestType"),
+    amount: val("amount"),
     category: val("category"),
     subCategory: val("subCategory"),
     paymentMode: val("paymentMode"),

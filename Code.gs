@@ -112,6 +112,7 @@ function doPost(e) {
     e.parameter.year,
     e.parameter.college,
     e.parameter.requestType,
+    e.parameter.amount,
     e.parameter.category,
     e.parameter.subCategory,
     e.parameter.paymentMode,
@@ -139,6 +140,7 @@ function doPost(e) {
         m.year,
         m.college,
         "Group",
+        e.parameter.amount,
         e.parameter.category,
         e.parameter.subCategory,
         e.parameter.paymentMode,
@@ -158,6 +160,7 @@ function doPost(e) {
     college: e.parameter.college,
     year: e.parameter.year,
     requestType: e.parameter.requestType,
+    amount: e.parameter.amount,
     category: e.parameter.category,
     subCategory: e.parameter.subCategory,
     paymentMode: e.parameter.paymentMode,
@@ -202,6 +205,7 @@ function sendAdminNotification(d) {
         <p><b>Name:</b> ${d.name}</p>
         <p><b>MSS ID:</b> ${d.mssid}</p>
         <p><b>College:</b> ${d.college}</p>
+        <p><b>Amount:</b> ₹${d.amount}</p>
         <p><b>Category:</b> ${d.category}</p>
         <p><b>Due Date:</b> ${d.dueDate}</p>
         ${d.details ? `<p><b>Details:</b> ${d.details}</p>` : ""}

@@ -1,5 +1,5 @@
 const ADMIN_PASSWORD = "medha@admin";
-const BASE_URL = "https://script.google.com/macros/s/AKfycbzmtjtIQSfwbxln0rpwMYwBx5bmj-s0ew-CudukGPzknUXyqVr88JQqOx_282VhTNGI/exec";
+const BASE_URL = "https://script.google.com/macros/s/AKfycbxu8D_d2lV_jBkYVSkoMR7bN_F40u_jHfWKT91jKnYgx_w24IKeJFlez1_ATCe0bIOZ/exec";
 
 const REQUEST_SHEET_ID = "1J3BqxjpEw2ZhNo3DY_-5TNkaBKNrIgKqLEPXuxa4_eY";
 const STUDENT_MASTER_SHEET_ID = "1eEiktXg_yZCac0EZk9ZtWzonQtpNTGKJ4DoEGyobybw";
