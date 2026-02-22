@@ -1,14 +1,9 @@
-/*************************
- CONFIG
-**************************/
-const BASE_URL =
-  "https://script.google.com/macros/s/AKfycbxu8D_d2lV_jBkYVSkoMR7bN_F40u_jHfWKT91jKnYgx_w24IKeJFlez1_ATCe0bIOZ/exec";
+const BASE_URL = "https://script.google.com/macros/s/AKfycbxd4YTFTcsWwP10lDs18qSugvZhIjt4KwqtVDdrTYmkP6C81G0OY7Tco2NFM8hLbedf/exec";
 
 let groupMembers = [];
 
-/*************************
- PAYMENT CATEGORY DATA
-**************************/
+/* ================= PAYMENT DATA ================= */
+
 const paymentData = {
 
   "College Fee": [
@@ -37,7 +32,8 @@ const paymentData = {
     "Original Degree",
     "Provisional Fee",
     "NCC Related",
-    "Study Hall Fee"
+    "Study Hall Fee",
+    "Others"
   ],
 
   "Hostel and Mess Fee": [
@@ -155,27 +151,22 @@ const paymentData = {
   ]
 };
 
-/*************************
- LOAD CATEGORIES
-**************************/
+/* ================= LOAD CATEGORIES ================= */
+
 function loadCategories() {
   const category = document.getElementById("category");
-  const subCategory = document.getElementById("subCategory");
+  if (!category) return;
 
   category.innerHTML = `<option value="">Select Category</option>`;
-  subCategory.innerHTML = `<option value="">Select Sub-Category</option>`;
 
-  Object.keys(paymentData).forEach(cat => {
+  Object.keys(paymentData).forEach(key => {
     const opt = document.createElement("option");
-    opt.value = cat;
-    opt.textContent = cat;
+    opt.value = key;
+    opt.textContent = key;
     category.appendChild(opt);
   });
 }
 
-/*************************
- LOAD SUB-CATEGORIES
-**************************/
 function loadSubCategories() {
   const categoryKey = document.getElementById("category").value;
   const subCategory = document.getElementById("subCategory");
@@ -191,101 +182,67 @@ function loadSubCategories() {
   });
 }
 
-/*************************
- HELPERS
-**************************/
+/* ================= HELPERS ================= */
+
 function val(id) {
   return document.getElementById(id).value.trim();
 }
 
-function setVal(id, value) {
-  document.getElementById(id).value = value || "";
+/* ================= REQUEST TYPE ================= */
+function handleRequestType() {
+
+  const type = val("requestType");
+
+  // Reset everything first
+  document.getElementById("groupMembers").innerHTML = "";
+  document.getElementById("groupCountBox").style.display = "none";
+  document.getElementById("studentDetailsBox").style.display = "none";
+  document.getElementById("mainStudentBox").style.display = "none";
+  document.getElementById("individualAmountBox").style.display = "none";
+  document.getElementById("paymentSection").style.display = "none";
+
+  if (type === "Individual") {
+    document.getElementById("studentDetailsBox").style.display = "block";
+    document.getElementById("mainStudentBox").style.display = "block";
+    document.getElementById("individualAmountBox").style.display = "block";
+    document.getElementById("paymentSection").style.display = "block";
+  }
+
+  if (type === "Group") {
+    document.getElementById("groupCountBox").style.display = "block";
+  }
 }
 
-function fetchJsonp(url, timeoutMs = 8000) {
-  return new Promise((resolve, reject) => {
-    const callbackName = `jsonp_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
-    const script = document.createElement("script");
-    const timeout = setTimeout(() => {
-      cleanup();
-      reject(new Error("Request timed out"));
-    }, timeoutMs);
+/* ================= GROUP ================= */
+function createGroupInputs() {
 
-    function cleanup() {
-      clearTimeout(timeout);
-      delete window[callbackName];
-      if (script.parentNode) script.parentNode.removeChild(script);
-    }
+  const count = parseInt(document.getElementById("groupCount").value);
 
-    window[callbackName] = data => {
-      cleanup();
-      resolve(data);
-    };
-
-    script.onerror = () => {
-      cleanup();
-      reject(new Error("Network error"));
-    };
-
-    const separator = url.includes("?") ? "&" : "?";
-    script.src = `${url}${separator}callback=${callbackName}`;
-    document.body.appendChild(script);
-  });
-}
-
-/*************************
- FETCH MAIN STUDENT
-**************************/
-function fetchMainStudent() {
-  const mssid = val("mssid");
-  if (!mssid) {
-    alert("❌ Enter MSS ID");
+  if (!count || count <= 0) {
+    alert("Enter valid number of group members");
     return;
   }
 
-  fetchJsonp(`${BASE_URL}?mssid=${encodeURIComponent(mssid)}`)
-    .then(data => {
-      if (!data || !data.name) {
-        alert(data?.error || "❌ Student not found");
-        return;
-      }
-      setVal("name", data.name);
-      setVal("college", data.college);
-      alert("✅ Student details fetched");
-    })
-    .catch(err => {
-      alert("❌ Unable to fetch student details. " + err.message);
-    });
-}
-
-/*************************
- REQUEST TYPE
-**************************/
-function handleRequestType() {
-  const type = val("requestType");
-  document.getElementById("groupMembers").innerHTML = "";
-  groupMembers = [];
-
-  document.getElementById("groupCountBox").style.display =
-    type === "Group" ? "block" : "none";
-}
-
-/*************************
- CREATE GROUP INPUTS
-**************************/
-function createGroupInputs() {
-  const count = parseInt(val("groupCount"));
   const box = document.getElementById("groupMembers");
-
   box.innerHTML = "";
   groupMembers = [];
+
+  // Show the studentDetails container
+  document.getElementById("studentDetailsBox").style.display = "block";
+
+  // Hide main student section for group
+  document.getElementById("mainStudentBox").style.display = "none";
+
+  // Show payment section
+  document.getElementById("paymentSection").style.display = "block";
 
   for (let i = 0; i < count; i++) {
     box.innerHTML += `
       <div class="memberBox">
-        <h5>Group Member ${i + 1}</h5>
+        <h4>Group Member ${i + 1}</h4>
         <input id="gm_mssid_${i}" placeholder="MSS ID">
         <input id="gm_year_${i}" placeholder="Year">
+        <input id="gm_amount_${i}" type="number" placeholder="Amount">
         <button type="button" onclick="fetchGroupMember(${i})">Fetch</button>
         <input id="gm_name_${i}" placeholder="Name" disabled>
         <input id="gm_college_${i}" placeholder="College" disabled>
@@ -293,23 +250,52 @@ function createGroupInputs() {
     `;
   }
 }
+/* ================= FETCH MAIN STUDENT ================= */
 
-/*************************
- FETCH GROUP MEMBER
-**************************/
-function fetchGroupMember(i) {
-  const mssid = val(`gm_mssid_${i}`);
-  const year = val(`gm_year_${i}`);
+function fetchMainStudent() {
+
+  const mssid = val("mssid");
 
   if (!mssid) {
     alert("Enter MSS ID");
     return;
   }
 
-  fetchJsonp(`${BASE_URL}?mssid=${encodeURIComponent(mssid)}`)
+  fetch(`${BASE_URL}?mssid=${encodeURIComponent(mssid)}`)
+    .then(res => res.json())
     .then(data => {
-      if (!data || !data.name) {
-        alert(data?.error || "❌ Member not found");
+
+      if (!data.name) {
+        alert("Student not found");
+        return;
+      }
+
+      document.getElementById("name").value = data.name;
+      document.getElementById("college").value = data.college;
+    })
+    .catch(err => {
+      console.log("Fetch error:", err);
+      alert("Error fetching student details");
+    });
+}
+
+/* ================= FETCH GROUP MEMBER ================= */
+
+function fetchGroupMember(i) {
+
+  const mssid = document.getElementById(`gm_mssid_${i}`).value.trim();
+
+  if (!mssid) {
+    alert("Enter MSS ID");
+    return;
+  }
+
+  fetch(`${BASE_URL}?mssid=${encodeURIComponent(mssid)}`)
+    .then(res => res.json())
+    .then(data => {
+
+      if (!data.name) {
+        alert("Student not found");
         return;
       }
 
@@ -317,84 +303,114 @@ function fetchGroupMember(i) {
       document.getElementById(`gm_college_${i}`).value = data.college;
 
       groupMembers[i] = {
-        mssid,
-        year,
+        mssid: mssid,
+        year: document.getElementById(`gm_year_${i}`).value.trim(),
+        amount: document.getElementById(`gm_amount_${i}`).value.trim(),
         name: data.name,
         college: data.college
       };
+
     })
     .catch(err => {
-      alert("❌ Unable to fetch member details. " + err.message);
+      console.log("Fetch error:", err);
+      alert("Error fetching student details");
     });
 }
 
-/*************************
- SUBMIT REQUEST
-**************************/
+/* ================= SUBMIT REQUEST ================= */
+/* ================= SUBMIT REQUEST ================= */
+
 function submitRequest() {
 
-  // Validate all mandatory fields
-  if (
-    !val("mssid") ||
-    !val("year") ||
-    !val("name") ||
-    !val("college") ||
-    !val("requestType") ||
-    !val("amount") ||
-    !val("category") ||
-    !val("subCategory") ||
-    !val("paymentMode") ||
-    !val("details") ||
-    !val("dueDate") ||
-    !val("attachment")
-  ) {
-    alert("❌ Please fill all required fields");
+  const type = val("requestType");
+
+  if (!type) {
+    alert("Select Request Type");
     return;
   }
 
-  // Validate group members if request type is Group
-  const requestType = val("requestType");
-  if (requestType === "Group") {
-    const groupCount = parseInt(val("groupCount"));
-    if (!groupCount || groupCount < 1) {
-      alert("❌ Please specify number of group members");
+  // ================= INDIVIDUAL VALIDATION =================
+  if (type === "Individual") {
+
+    if (!val("mssid") ||
+        !val("year") ||
+        !document.getElementById("name").value ||
+        !document.getElementById("college").value ||
+        !val("amount")) {
+
+      alert("Fill all student details");
       return;
     }
-    if (groupMembers.length !== groupCount) {
-      alert("❌ Please fetch details for all group members");
+  }
+
+  // ================= GROUP VALIDATION =================
+  if (type === "Group") {
+
+    const count = parseInt(document.getElementById("groupCount").value);
+
+    if (!count || count <= 0) {
+      alert("Enter group member count");
       return;
     }
-    for (let i = 0; i < groupCount; i++) {
-      if (!groupMembers[i] || !groupMembers[i].name) {
-        alert(`❌ Please fetch details for Group Member ${i + 1}`);
+
+    for (let i = 0; i < count; i++) {
+
+      if (!document.getElementById(`gm_mssid_${i}`).value.trim() ||
+          !document.getElementById(`gm_year_${i}`).value.trim() ||
+          !document.getElementById(`gm_amount_${i}`).value.trim() ||
+          !document.getElementById(`gm_name_${i}`).value.trim() ||
+          !document.getElementById(`gm_college_${i}`).value.trim()) {
+
+        alert(`Fill all details for Group Member ${i + 1}`);
         return;
       }
     }
   }
 
+  // ================= PAYMENT VALIDATION =================
+  if (!val("category") ||
+      !val("subCategory") ||
+      !val("paymentMode") ||
+      !val("details") ||
+      !val("dueDate") ||
+      !val("attachment")) {
+
+    alert("Fill all payment details");
+    return;
+  }
+
+  // ================= LOADING =================
+  document.getElementById("submitBtn").disabled = true;
+  document.getElementById("loadingBox").style.display = "block";
+
   const payload = new URLSearchParams({
     requestType: val("requestType"),
-    amount: val("amount"),
     category: val("category"),
     subCategory: val("subCategory"),
     paymentMode: val("paymentMode"),
     details: val("details"),
     dueDate: val("dueDate"),
     mssid: val("mssid"),
-    name: val("name"),
-    college: val("college"),
+    name: document.getElementById("name").value,
+    college: document.getElementById("college").value,
     year: val("year"),
+    amount: val("amount"),
     attachmentLink: val("attachment"),
     groupMembers: JSON.stringify(groupMembers)
   });
 
-  fetch(BASE_URL, {
-    method: "POST",
-    body: payload
-  })
+  fetch(BASE_URL, { method: "POST", body: payload })
     .then(res => res.text())
-    .then(reqId => {
-      alert("✅ Request Submitted\nRequest ID: " + reqId);
-      window.location.href = "index.html";
+    .then(id => {
+      alert("Request Submitted\nID: " + id);
+      window.location.reload();
+    })
+    .catch(err => {
+      console.log("Submit error:", err);
+      alert("Error submitting request");
+    })
+    .finally(() => {
+      document.getElementById("submitBtn").disabled = false;
+      document.getElementById("loadingBox").style.display = "none";
     });
 }
