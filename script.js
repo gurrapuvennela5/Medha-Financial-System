@@ -1,4 +1,4 @@
-const BASE_URL = "https://script.google.com/macros/s/AKfycbxd4YTFTcsWwP10lDs18qSugvZhIjt4KwqtVDdrTYmkP6C81G0OY7Tco2NFM8hLbedf/exec";
+const BASE_URL = "https://script.google.com/macros/s/AKfycbzxWXZ0dL7GKbMmt3_D3WARj0DDUdZieVx54X5c6cWA0ucMHdrMdPTFZsM9qiGc_xg0/exec";
 
 let groupMembers = [];
 
@@ -414,3 +414,4 @@ function submitRequest() {
       document.getElementById("loadingBox").style.display = "none";
     });
 }
+
