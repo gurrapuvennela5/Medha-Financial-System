@@ -1,8 +1,8 @@
 const ADMIN_PASSWORD = "medha@admin";
-const BASE_URL = "https://script.google.com/macros/s/AKfycbwImuMkCbnKm1BrWOPfH_4skVaJgGz9VIuRoJQI3f7vUU2zZf8MnQ4PFLfYhGfkUQmD/exec";
+const BASE_URL = "https://script.google.com/macros/s/AKfycbzxWXZ0dL7GKbMmt3_D3WARj0DDUdZieVx54X5c6cWA0ucMHdrMdPTFZsM9qiGc_xg0/exec";
 
-const REQUEST_SHEET_ID = "18TJg7T4Stf8FWWfhNyOfNJztDsLy20jSVNR-SgliOIk";
-const STUDENT_MASTER_SHEET_ID = "152IsL4_2lLLn4qHGkMLy2LxkJ27c3FzLZlOocOW-DTM";
+const REQUEST_SHEET_ID = "1J3BqxjpEw2ZhNo3DY_-5TNkaBKNrIgKqLEPXuxa4_eY";
+const STUDENT_MASTER_SHEET_ID = "1eEiktXg_yZCac0EZk9ZtWzonQtpNTGKJ4DoEGyobybw";
 
 let isAuthenticated = false;
 
@@ -90,5 +90,3 @@ Then download as Excel.`
     `https://docs.google.com/spreadsheets/d/${REQUEST_SHEET_ID}/edit`
   );
 }
-
-
