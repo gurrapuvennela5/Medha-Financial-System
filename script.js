@@ -1,4 +1,4 @@
-const BASE_URL = "https://script.google.com/macros/s/AKfycbwImuMkCbnKm1BrWOPfH_4skVaJgGz9VIuRoJQI3f7vUU2zZf8MnQ4PFLfYhGfkUQmD/exec";
+const BASE_URL = "https://script.google.com/macros/s/AKfycbzxWXZ0dL7GKbMmt3_D3WARj0DDUdZieVx54X5c6cWA0ucMHdrMdPTFZsM9qiGc_xg0/exec";
 
 let groupMembers = [];
 
@@ -241,7 +241,14 @@ function createGroupInputs() {
       <div class="memberBox">
         <h4>Group Member ${i + 1}</h4>
         <input id="gm_mssid_${i}" placeholder="MSS ID">
-        <input id="gm_year_${i}" placeholder="Year">
+        <select id="gm_year_${i}">
+  <option value="">Select Year</option>
+  <option value="1">1st Year</option>
+  <option value="2">2nd Year</option>
+  <option value="3">3rd Year</option>
+  <option value="4">4th Year</option>
+    <option value="5">5th Year</option>
+</select>
         <input id="gm_amount_${i}" type="number" placeholder="Amount">
         <button type="button" onclick="fetchGroupMember(${i})">Fetch</button>
         <input id="gm_name_${i}" placeholder="Name" disabled>
@@ -381,7 +388,7 @@ function submitRequest() {
 
   // ================= LOADING =================
   document.getElementById("submitBtn").disabled = true;
-  document.getElementById("loadingBox").style.display = "block";
+ document.getElementById("overlayLoader").style.display = "flex";
 
   const payload = new URLSearchParams({
     requestType: val("requestType"),
@@ -411,8 +418,6 @@ function submitRequest() {
     })
     .finally(() => {
       document.getElementById("submitBtn").disabled = false;
-      document.getElementById("loadingBox").style.display = "none";
+   document.getElementById("overlayLoader").style.display = "none";
     });
 }
-
-
