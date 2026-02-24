@@ -37,7 +37,14 @@
   <h4>Student Details</h4>
   <div class="form-row">
     <input id="mssid" placeholder="MSS ID">
-    <input id="year" placeholder="Year">
+   <select id="year">
+  <option value="">Select Year</option>
+  <option value="1">1st Year</option>
+  <option value="2">2nd Year</option>
+  <option value="3">3rd Year</option>
+  <option value="4">4th Year</option>
+  <option value="5">5th Year</option>
+</select>
   </div>
 
   <button type="button" onclick="fetchMainStudent()">Fetch Details</button>
@@ -99,7 +106,14 @@
 
   </div>
 </div>
+<div id="overlayLoader" class="overlay" style="display:none;">
+  <div class="overlay-content">
+    <div class="loader"></div>
+    <p>Submitting request... Please wait</p>
+  </div>
+</div>
 
 <script src="script.js"></script>
+
 </body>
 </html>
